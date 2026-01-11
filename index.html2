@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UPI Payment | Secure Checkout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.payment-box {
+    background: #fff;
+    width: 100%;
+    max-width: 420px;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+.payment-box h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #1e3c72;
+}
+
+.amount {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+}
+
+input:focus {
+    border-color: #1e3c72;
+    outline: none;
+}
+
+.error {
+    color: red;
+    font-size: 13px;
+    display: none;
+    margin-bottom: 10px;
+}
+
+.qr-box {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.qr-box img {
+    width: 180px;
+    display: none;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background: #1e3c72;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.processing {
+    text-align: center;
+    display: none;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.success {
+    display: none;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.success h3 {
+    color: green;
+    margin-bottom: 5px;
+}
+
+.secure {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 15px;
+    color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="payment-box">
+
+    <h2>UPI Payment</h2>
+    <div class="amount">Pay ₹1,180</div>
+
+    <!-- UPI ID -->
+    <label for="upiId">Enter UPI ID</label>
+    <input type="text" id="upiId" placeholder="example@upi">
+    <div class="error" id="upiError">Please enter a valid UPI ID</div>
+
+    <!-- QR CODE -->
+    <div class="qr-box">
+        <p>OR Scan QR Code</p>
+        <img id="qrImage" alt="UPI QR Code">
+    </div>
+
+    <!-- PAY BUTTON -->
+    <button id="payBtn" disabled>Pay Now</button>
+
+    <div class="processing" id="processing">Processing Payment...</div>
+
+    <!-- SUCCESS -->
+    <div class="success" id="successBox">
+        <h3>✔ Payment Successful</h3>
+        <p>Transaction ID: <b id="txnId"></b></p>
+    </div>
+
+    <div class="secure">🔒 100% Secure UPI Payment</div>
+
+</div>
+
+<script>
+const upiInput = document.getElementById("upiId");
+const errorMsg = document.getElementById("upiError");
+const payBtn = document.getElementById("payBtn");
+const qrImage = document.getElementById("qrImage");
+const processing = document.getElementById("processing");
+const successBox = document.getElementById("successBox");
+const txnId = document.getElementById("txnId");
+
+upiInput.addEventListener("input", validateUPI);
+payBtn.addEventListener("click", processPayment);
+
+function validateUPI() {
+    const upi = upiInput.value.trim();
+    const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+
+    if (upiRegex.test(upi)) {
+        errorMsg.style.display = "none";
+        payBtn.disabled = false;
+
+        const upiURL = `upi://pay?pa=${encodeURIComponent(upi)}&pn=Merchant&am=1180&cu=INR`;
+
+        qrImage.src =
+            "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" +
+            encodeURIComponent(upiURL);
+
+        qrImage.style.display = "block";
+    } else {
+        errorMsg.style.display = "block";
+        payBtn.disabled = true;
+        qrImage.style.display = "none";
+    }
+}
+
+function processPayment() {
+    payBtn.disabled = true;
+    processing.style.display = "block";
+
+    setTimeout(() => {
+        processing.style.display = "none";
+        successBox.style.display = "block";
+
+        const transaction =
+            "UPI" + Math.floor(100000000 + Math.random() * 900000000);
+        txnId.textContent = transaction;
+    }, 2000);
+}
+</script>
+
+</body>
+</html>
