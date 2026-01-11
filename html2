@@ -1,0 +1,41 @@
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+let qrScanner;
+
+function showQR() {
+    document.getElementById("qrSection").style.display = "block";
+    startQR();
+}
+
+function showCard() {
+    document.getElementById("qrSection").style.display = "none";
+    stopQR();
+}
+
+function startQR() {
+    if (qrScanner) return;
+
+    qrScanner = new Html5Qrcode("qr-reader");
+    qrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        qrSuccess,
+        () => {}
+    );
+}
+
+function stopQR() {
+    if (qrScanner) {
+        qrScanner.stop().then(() => {
+            qrScanner.clear();
+            qrScanner = null;
+        });
+    }
+}
+
+function qrSuccess(decodedText) {
+    stopQR();
+    alert("Payment QR Scanned Successfully:\n" + decodedText);
+}
+</script>
