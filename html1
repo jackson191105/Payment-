@@ -1,0 +1,11 @@
+<div class="payment-toggle">
+    <button type="button" onclick="showCard()">Card</button>
+    <button type="button" onclick="showQR()">QR Scan</button>
+</div>
+
+<!-- QR Scanner Section -->
+<div id="qrSection" class="qr-section">
+    <h4>Scan & Pay</h4>
+    <div id="qr-reader"></div>
+    <p class="qr-note">Scan using any UPI app</p>
+</div>
